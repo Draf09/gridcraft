@@ -19,6 +19,8 @@ pub mod backstage;
 mod border_preview;
 mod cell_pictures;
 pub mod chartview;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod claude_pane;
 pub mod code_editor;
 pub mod control;
 mod craft_fonts_policy;
@@ -229,6 +231,8 @@ pub struct SheetApp {
     /// without reaching input handling, so the hook must offer the same step again.
     pub(crate) synthetic_injected_at_pass: Option<u64>,
     pub control_rx: Option<std::sync::mpsc::Receiver<ControlRequest>>,
+    #[cfg(not(target_arch = "wasm32"))]
+    pub claude: claude_pane::ClaudePane,
     pub grid: grid::GridState,
     pub perf: Perf,
     pub fonts_ready: bool,

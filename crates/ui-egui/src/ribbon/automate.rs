@@ -10,6 +10,17 @@ pub(super) fn automate(app: &mut SheetApp, ui: &mut Ui) {
     if big_button(ui, Icon::Script, "Macros", "Macros and scripts in this workbook (Alt+F8)", false).clicked() {
         app.open_dialog("macros", json!({}));
     }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let open = app.grid.pane.as_deref() == Some("claude");
+        let r = big_button(ui, Icon::Comment, "Claude", "Chat with Claude about this workbook", false);
+        if open {
+            ui.painter().rect_stroke(r.rect, 5.0, egui::Stroke::new(2.0, Tokens::get(ui.ctx()).accent), egui::StrokeKind::Inside);
+        }
+        if r.clicked() {
+            app.grid.pane = if open { None } else { Some("claude".into()) };
+        }
+    }
     let recording = app.session.is_recording();
     ui.vertical(|ui| {
         let (label, tip) =

@@ -25,6 +25,7 @@ pub fn show(app: &mut SheetApp, ui: &mut Ui) {
             let title = match pane.as_str() {
                 "comments" => "Comments",
                 "watch" => "Watch Window",
+                "claude" => "Claude",
                 "selection" => "Selection",
                 "formatChart" => "Format Chart Area",
                 _ => "",
@@ -40,6 +41,12 @@ pub fn show(app: &mut SheetApp, ui: &mut Ui) {
             });
         });
         ui.separator();
+        // The chat lays out its own input row and scrolling.
+        #[cfg(not(target_arch = "wasm32"))]
+        if pane == "claude" {
+            crate::claude_pane::show(app, ui);
+            return;
+        }
         egui::ScrollArea::vertical().show(ui, |ui| match pane.as_str() {
             "comments" => comments(app, ui),
             "watch" => watch(app, ui),
